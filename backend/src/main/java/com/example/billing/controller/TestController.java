@@ -3,7 +3,9 @@ package com.example.billing.controller;
 import com.example.billing.model.Price;
 import com.example.billing.model.Reading;
 import com.example.billing.model.User;
-import com.example.billing.service.CsvParserService;
+import com.example.billing.service.PriceService;
+import com.example.billing.service.ReadingService;
+import com.example.billing.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,24 +16,28 @@ import java.util.List;
 @RequestMapping("/api/test")
 public class TestController {
 
-    private final CsvParserService csvParserService;
+    private final UserService userService;
+    private final ReadingService readingService;
+    private final PriceService priceService;
 
-    public TestController(CsvParserService csvParserService) {
-        this.csvParserService = csvParserService;
+    public TestController(UserService userService, ReadingService readingService, PriceService priceService) {
+        this.userService = userService;
+        this.readingService = readingService;
+        this.priceService = priceService;
     }
 
     @GetMapping("/users")
     public List<User> getUsers() {
-        return csvParserService.loadUsers();
+        return userService.getAllUsers();
     }
 
     @GetMapping("/readings")
     public List<Reading> getReadings() {
-        return csvParserService.loadReadings();
+        return readingService.getReadingsByReference("123456789");
     }
 
     @GetMapping("/prices")
     public List<Price> getPrices() {
-        return csvParserService.loadPrices(1);
+        return priceService.getPricesByPriceListId(1);
     }
 }
