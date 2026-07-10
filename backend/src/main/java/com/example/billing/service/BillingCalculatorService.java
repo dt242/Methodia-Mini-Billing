@@ -33,6 +33,10 @@ public class BillingCalculatorService {
                 .max(Comparator.comparing(Reading::date))
                 .orElseThrow(() -> new IllegalArgumentException("No end reading found in or before: " + targetMonth));
 
+        if (startReading.equals(endReading)) {
+            throw new IllegalArgumentException("Start and end readings are the same.");
+        }
+
         BigDecimal quantity = endReading.value()
                 .subtract(startReading.value())
                 .setScale(3, RoundingMode.UP);
@@ -47,7 +51,6 @@ public class BillingCalculatorService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No active price found for the target month: " + targetMonth));
 
-        // 5. Междинна и крайна сума
         BigDecimal intermediateAmount = quantity.multiply(activePrice.value())
                 .setScale(3, RoundingMode.UP);
 
