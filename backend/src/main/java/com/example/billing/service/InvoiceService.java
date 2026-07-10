@@ -59,6 +59,7 @@ public class InvoiceService {
                 numberGenerator.getNextNumber(),
                 user.name(),
                 user.reference(),
+                targetMonth,
                 calcResult.finalAmount(),
                 List.of(line)
         );
