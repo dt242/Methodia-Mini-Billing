@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.file.Path;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -22,13 +23,15 @@ public class TestController {
     private final PriceService priceService;
     private final BillingCalculatorService calculatorService;
     private final InvoiceService invoiceService;
+    private final InvoiceJsonExporter jsonExporter;
 
-    public TestController(UserService userService, ReadingService readingService, PriceService priceService, BillingCalculatorService calculatorService, InvoiceService invoiceService) {
+    public TestController(UserService userService, ReadingService readingService, PriceService priceService, BillingCalculatorService calculatorService, InvoiceService invoiceService, InvoiceJsonExporter jsonExporter) {
         this.userService = userService;
         this.readingService = readingService;
         this.priceService = priceService;
         this.calculatorService = calculatorService;
         this.invoiceService = invoiceService;
+        this.jsonExporter = jsonExporter;
     }
 
     @GetMapping("/users")
@@ -56,5 +59,13 @@ public class TestController {
     @GetMapping("/invoice")
     public Invoice testInvoiceGeneration() {
         return invoiceService.generateInvoice("123456789", YearMonth.of(2025, 3), "gas");
+    }
+
+    @GetMapping("/export")
+    public String testExport() {
+        YearMonth targetMonth = YearMonth.of(2025, 3);
+        Invoice invoice = invoiceService.generateInvoice("123456789", targetMonth, "gas");
+        Path savedPath = jsonExporter.export(invoice, "output");
+        return "Invoice successfully created at: " + savedPath.toAbsolutePath().toString();
     }
 }

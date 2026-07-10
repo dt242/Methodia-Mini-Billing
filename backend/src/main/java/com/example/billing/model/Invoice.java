@@ -2,6 +2,7 @@ package com.example.billing.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.YearMonth;
 import java.util.List;
 
 public record Invoice(
@@ -9,6 +10,7 @@ public record Invoice(
         String documentNumber,
         String consumer,
         String reference,
+        YearMonth targetMonth,
         BigDecimal totalAmount,
         List<InvoiceLine> lines
 ) {}
