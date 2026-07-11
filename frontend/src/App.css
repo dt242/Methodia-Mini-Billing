@@ -52,3 +52,16 @@
 .history-title { color: #444; }
 .divider { border-color: #e0e0e0; }
 .empty-text { color: #888; font-style: italic; text-align: center; }
+
+.error-text { color: red; text-align: center; font-weight: bold; }
+
+.invoice-card {
+  background-color: #eefcf5;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #c3e6cb;
+  margin-bottom: 10px;
+}
+
+.invoice-header { margin: 0 0 10px 0; color: #155724; }
+.invoice-detail { margin: 5px 0; }
