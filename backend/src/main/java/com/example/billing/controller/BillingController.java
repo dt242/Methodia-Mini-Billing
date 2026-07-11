@@ -4,6 +4,7 @@ import com.example.billing.dto.BillingRequest;
 import com.example.billing.model.Invoice;
 import com.example.billing.service.InvoiceJsonExporter;
 import com.example.billing.service.InvoiceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,6 @@ public class BillingController {
         YearMonth targetMonth = YearMonth.of(request.year(), request.month());
         Invoice invoice = invoiceService.generateInvoice(request.reference(), targetMonth, request.product());
         jsonExporter.export(invoice, "output");
-        return ResponseEntity.ok(invoice);
+        return ResponseEntity.status(HttpStatus.CREATED).body(invoice);
     }
 }
