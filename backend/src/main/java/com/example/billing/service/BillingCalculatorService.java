@@ -22,47 +22,63 @@ public class BillingCalculatorService {
             YearMonth targetMonth,
             ProductType product) {
 
-        Reading startReading = userReadings.stream()
+        Reading startReading = findStartReading(userReadings, targetMonth, product);
+        Reading endReading = findEndReading(userReadings, targetMonth, product);
+
+        validateReadings(startReading, endReading);
+
+        BigDecimal quantity = calculateQuantity(startReading, endReading);
+        Price activePrice = findActivePrice(userPrices, targetMonth, product);
+        BigDecimal finalAmount = calculateAmount(quantity, activePrice);
+
+        return new CalculationResult(quantity, startReading, endReading, activePrice.value(), finalAmount);
+    }
+
+    private Reading findStartReading(List<Reading> readings, YearMonth targetMonth, ProductType product) {
+        return readings.stream()
                 .filter(r -> r.product() == product)
                 .filter(r -> r.date().toLocalDate().isBefore(targetMonth.atDay(1)))
                 .max(Comparator.comparing(Reading::date))
                 .orElseThrow(() -> new IllegalArgumentException("No start reading found before: " + targetMonth));
+    }
 
-        Reading endReading = userReadings.stream()
+    private Reading findEndReading(List<Reading> readings, YearMonth targetMonth, ProductType product) {
+        return readings.stream()
                 .filter(r -> r.product() == product)
                 .filter(r -> !r.date().toLocalDate().isAfter(targetMonth.atEndOfMonth()))
                 .max(Comparator.comparing(Reading::date))
                 .orElseThrow(() -> new IllegalArgumentException("No end reading found in or before: " + targetMonth));
+    }
 
-        if (startReading.equals(endReading)) {
-            throw new IllegalArgumentException("Start and end readings are the same.");
+    private void validateReadings(Reading startReading, Reading endReading) {
+        if (startReading.date().isAfter(endReading.date())) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
         }
+        if (endReading.value().compareTo(startReading.value()) < 0) {
+            throw new IllegalArgumentException("End reading value cannot be less than start reading value.");
+        }
+    }
 
-        BigDecimal quantity = endReading.value()
+    private BigDecimal calculateQuantity(Reading startReading, Reading endReading) {
+        return endReading.value()
                 .subtract(startReading.value())
                 .setScale(3, RoundingMode.UP);
+    }
 
+    private Price findActivePrice(List<Price> prices, YearMonth targetMonth, ProductType product) {
         LocalDate targetMonthStart = targetMonth.atDay(1);
         LocalDate targetMonthEnd = targetMonth.atEndOfMonth();
 
-        Price activePrice = userPrices.stream()
-                .filter(p -> p.product().equals(product))
-                .filter(p -> !p.startDate().isAfter(targetMonthStart)
-                        && !p.endDate().isBefore(targetMonthEnd))
+        return prices.stream()
+                .filter(p -> p.product() == product)
+                .filter(p -> !p.startDate().isAfter(targetMonthStart) && !p.endDate().isBefore(targetMonthEnd))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No active price found for the target month: " + targetMonth));
+    }
 
+    private BigDecimal calculateAmount(BigDecimal quantity, Price activePrice) {
         BigDecimal intermediateAmount = quantity.multiply(activePrice.value())
                 .setScale(3, RoundingMode.UP);
-
-        BigDecimal finalAmount = intermediateAmount.setScale(2, RoundingMode.UP);
-
-        return new CalculationResult(
-                quantity,
-                startReading,
-                endReading,
-                activePrice.value(),
-                finalAmount
-        );
+        return intermediateAmount.setScale(2, RoundingMode.UP);
     }
 }
