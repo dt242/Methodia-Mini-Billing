@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
-import { generateInvoice } from './services/billingApi';
+import { generateInvoice, fetchInvoices } from './services/billingApi';
 
 function App() {
   const [reference, setReference] = useState('123456789');
@@ -10,6 +10,23 @@ function App() {
   const [invoices, setInvoices] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const data = await fetchInvoices();
+        setInvoices(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setInitialLoad(false);
+      }
+    };
+
+    loadHistory();
+  }, []);
+
   const handleGenerate = async () => {
     setLoading(true);
     setError(null);
@@ -72,7 +89,8 @@ function App() {
         <hr className="divider" />
 
         {error && <p className="error-text">{error}</p>}
-        {invoices.length === 0 && !error && <p className="empty-text">Няма генерирани фактури...</p>}
+        {initialLoad && <p className="empty-text">Зареждане на историята...</p>}
+        {!initialLoad && invoices.length === 0 && !error && <p className="empty-text">Няма генерирани фактури...</p>}
 
         <div style={{ marginTop: '15px' }}>
           {invoices.map((inv) => (

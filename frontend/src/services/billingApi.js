@@ -6,7 +6,6 @@ export async function generateInvoice(requestData) {
         headers: {
             'Content-Type': 'application/json',
         },
-        // Превръщаме JavaScript обекта в JSON текст за бекенда
         body: JSON.stringify(requestData)
     });
 
@@ -14,6 +13,15 @@ export async function generateInvoice(requestData) {
         throw new Error('Грешка при генериране на фактура. Провери дали данните са коректни.');
     }
 
-    // Връщаме готовата фактура (вече превърната обратно в JavaScript обект)
+    return response.json();
+}
+
+export async function fetchInvoices() {
+    const response = await fetch(`${API_BASE_URL}/invoices`);
+
+    if (!response.ok) {
+        throw new Error('Грешка при зареждане на историята на фактурите.');
+    }
+
     return response.json();
 }
