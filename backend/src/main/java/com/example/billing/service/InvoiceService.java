@@ -1,6 +1,7 @@
 package com.example.billing.service;
 
 import com.example.billing.dto.CalculationResult;
+import com.example.billing.exception.ResourceNotFoundException;
 import com.example.billing.model.Invoice;
 import com.example.billing.model.InvoiceLine;
 import com.example.billing.model.Price;
@@ -47,7 +48,7 @@ public class InvoiceService {
 
     private User getUser(String reference) {
         return userService.getUserByReference(reference)
-                .orElseThrow(() -> new IllegalArgumentException("User not found: " + reference));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + reference));
     }
 
     private InvoiceLine createInvoiceLine(CalculationResult calcResult, ProductType product, int priceListId) {

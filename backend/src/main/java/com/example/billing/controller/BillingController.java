@@ -4,6 +4,7 @@ import com.example.billing.dto.BillingRequest;
 import com.example.billing.model.Invoice;
 import com.example.billing.service.InvoiceJsonExporter;
 import com.example.billing.service.InvoiceService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class BillingController {
     }
 
     @PostMapping("/invoice")
-    public ResponseEntity<Invoice> generateInvoice(@RequestBody BillingRequest request) {
+    public ResponseEntity<Invoice> generateInvoice(@Valid @RequestBody BillingRequest request) {
         YearMonth targetMonth = YearMonth.of(request.year(), request.month());
         Invoice invoice = invoiceService.generateInvoice(request.reference(), targetMonth, request.product());
         jsonExporter.export(invoice, "output");
