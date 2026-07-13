@@ -8,7 +8,7 @@ public record InvoiceLine(
         BigDecimal quantity,
         Instant lineStart,
         Instant lineEnd,
-        String product,
+        ProductType product,
         BigDecimal price,
         int priceList,
         BigDecimal amount

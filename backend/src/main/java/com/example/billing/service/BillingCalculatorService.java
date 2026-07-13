@@ -2,6 +2,7 @@ package com.example.billing.service;
 
 import com.example.billing.dto.CalculationResult;
 import com.example.billing.model.Price;
+import com.example.billing.model.ProductType;
 import com.example.billing.model.Reading;
 import org.springframework.stereotype.Service;
 
@@ -19,16 +20,16 @@ public class BillingCalculatorService {
             List<Reading> userReadings,
             List<Price> userPrices,
             YearMonth targetMonth,
-            String product) {
+            ProductType product) {
 
         Reading startReading = userReadings.stream()
-                .filter(r -> r.product().equals(product))
+                .filter(r -> r.product() == product)
                 .filter(r -> r.date().toLocalDate().isBefore(targetMonth.atDay(1)))
                 .max(Comparator.comparing(Reading::date))
                 .orElseThrow(() -> new IllegalArgumentException("No start reading found before: " + targetMonth));
 
         Reading endReading = userReadings.stream()
-                .filter(r -> r.product().equals(product))
+                .filter(r -> r.product() == product)
                 .filter(r -> !r.date().toLocalDate().isAfter(targetMonth.atEndOfMonth()))
                 .max(Comparator.comparing(Reading::date))
                 .orElseThrow(() -> new IllegalArgumentException("No end reading found in or before: " + targetMonth));

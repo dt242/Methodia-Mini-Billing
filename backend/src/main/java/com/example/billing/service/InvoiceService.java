@@ -1,11 +1,7 @@
 package com.example.billing.service;
 
 import com.example.billing.dto.CalculationResult;
-import com.example.billing.model.Invoice;
-import com.example.billing.model.InvoiceLine;
-import com.example.billing.model.Price;
-import com.example.billing.model.Reading;
-import com.example.billing.model.User;
+import com.example.billing.model.*;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -33,7 +29,7 @@ public class InvoiceService {
         this.numberGenerator = numberGenerator;
     }
 
-    public Invoice generateInvoice(String reference, YearMonth targetMonth, String product) {
+    public Invoice generateInvoice(String reference, YearMonth targetMonth, ProductType product) {
         User user = userService.getUserByReference(reference)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + reference));
 

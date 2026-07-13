@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 
 public record Reading(
         String reference,
-        String product,
+        ProductType product,
         ZonedDateTime date,
         BigDecimal value
 ) {}
