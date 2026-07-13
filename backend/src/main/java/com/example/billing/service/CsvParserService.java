@@ -1,6 +1,7 @@
 package com.example.billing.service;
 
 import com.example.billing.model.Price;
+import com.example.billing.model.ProductType;
 import com.example.billing.model.Reading;
 import com.example.billing.model.User;
 import org.springframework.core.io.ClassPathResource;
@@ -31,7 +32,7 @@ public class CsvParserService {
             String[] parts = line.split(",");
             return new Reading(
                     parts[0].trim(),
-                    parts[1].trim(),
+                    ProductType.fromCode(parts[1].trim()),
                     ZonedDateTime.parse(parts[2].trim()),
                     new BigDecimal(parts[3].trim())
             );
@@ -43,7 +44,7 @@ public class CsvParserService {
         return parseFile(fileName, line -> {
             String[] parts = line.split(",");
             return new Price(
-                    parts[0].trim(),
+                    ProductType.fromCode(parts[0].trim()),
                     LocalDate.parse(parts[1].trim()),
                     LocalDate.parse(parts[2].trim()),
                     new BigDecimal(parts[3].trim())
