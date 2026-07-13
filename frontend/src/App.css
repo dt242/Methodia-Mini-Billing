@@ -65,3 +65,27 @@
 
 .invoice-header { margin: 0 0 10px 0; color: #155724; }
 .invoice-detail { margin: 5px 0; }
+
+.action-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.reload-btn {
+  padding: 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.reload-btn:hover {
+  background-color: #218838;
+}
+
+.invoice-list {
+  margin-top: 15px;
+}

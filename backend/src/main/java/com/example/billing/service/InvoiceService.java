@@ -75,4 +75,10 @@ public class InvoiceService {
                 lines
         );
     }
+
+    public void reloadAllData() {
+        userService.reloadCache();
+        readingService.reloadCache();
+        priceService.reloadCache();
+    }
 }
