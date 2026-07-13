@@ -1,6 +1,7 @@
 package com.example.billing.service;
 
 import com.example.billing.model.Reading;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,17 +10,19 @@ import java.util.List;
 public class ReadingService {
 
     private final CsvParserService csvParserService;
+    private List<Reading> readingsCache;
 
     public ReadingService(CsvParserService csvParserService) {
         this.csvParserService = csvParserService;
     }
 
-    public List<Reading> getAllReadings() {
-        return csvParserService.loadReadings();
+    @PostConstruct
+    public void reloadCache() {
+        this.readingsCache = csvParserService.loadReadings();
     }
 
     public List<Reading> getReadingsByReference(String reference) {
-        return getAllReadings().stream()
+        return readingsCache.stream()
                 .filter(reading -> reading.reference().equals(reference))
                 .toList();
     }

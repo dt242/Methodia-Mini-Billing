@@ -44,4 +44,10 @@ public class BillingController {
         List<Invoice> invoices = storageService.getAllInvoices();
         return ResponseEntity.ok(invoices);
     }
+
+    @PostMapping("/reload-data")
+    public ResponseEntity<String> reloadData() {
+        invoiceService.reloadAllData();
+        return ResponseEntity.ok("CSV data successfully reloaded in memory.");
+    }
 }
