@@ -1,5 +1,6 @@
 package com.example.billing.service;
 
+import com.example.billing.config.AppConstants;
 import com.example.billing.dto.CalculationResult;
 import com.example.billing.exception.InvalidDataException;
 import com.example.billing.exception.ResourceNotFoundException;
@@ -64,7 +65,7 @@ public class BillingCalculatorService {
     private BigDecimal calculateQuantity(Reading startReading, Reading endReading) {
         return endReading.value()
                 .subtract(startReading.value())
-                .setScale(3, RoundingMode.UP);
+                .setScale(AppConstants.QUANTITY_SCALE, RoundingMode.UP);
     }
 
     private Price findActivePrice(List<Price> prices, YearMonth targetMonth, ProductType product) {
@@ -80,7 +81,7 @@ public class BillingCalculatorService {
 
     private BigDecimal calculateAmount(BigDecimal quantity, Price activePrice) {
         BigDecimal intermediateAmount = quantity.multiply(activePrice.value())
-                .setScale(3, RoundingMode.UP);
-        return intermediateAmount.setScale(2, RoundingMode.UP);
+                .setScale(AppConstants.QUANTITY_SCALE, RoundingMode.UP);
+        return intermediateAmount.setScale(AppConstants.AMOUNT_SCALE, RoundingMode.UP);
     }
 }
