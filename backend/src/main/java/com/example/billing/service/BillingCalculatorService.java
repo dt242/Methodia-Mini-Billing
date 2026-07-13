@@ -1,6 +1,8 @@
 package com.example.billing.service;
 
 import com.example.billing.dto.CalculationResult;
+import com.example.billing.exception.InvalidDataException;
+import com.example.billing.exception.ResourceNotFoundException;
 import com.example.billing.model.Price;
 import com.example.billing.model.ProductType;
 import com.example.billing.model.Reading;
@@ -39,7 +41,7 @@ public class BillingCalculatorService {
                 .filter(r -> r.product() == product)
                 .filter(r -> r.date().toLocalDate().isBefore(targetMonth.atDay(1)))
                 .max(Comparator.comparing(Reading::date))
-                .orElseThrow(() -> new IllegalArgumentException("No start reading found before: " + targetMonth));
+                .orElseThrow(() -> new InvalidDataException("No start reading found before: " + targetMonth));
     }
 
     private Reading findEndReading(List<Reading> readings, YearMonth targetMonth, ProductType product) {
@@ -47,15 +49,15 @@ public class BillingCalculatorService {
                 .filter(r -> r.product() == product)
                 .filter(r -> !r.date().toLocalDate().isAfter(targetMonth.atEndOfMonth()))
                 .max(Comparator.comparing(Reading::date))
-                .orElseThrow(() -> new IllegalArgumentException("No end reading found in or before: " + targetMonth));
+                .orElseThrow(() -> new InvalidDataException("No end reading found in or before: " + targetMonth));
     }
 
     private void validateReadings(Reading startReading, Reading endReading) {
         if (startReading.date().isAfter(endReading.date())) {
-            throw new IllegalArgumentException("Start date cannot be after end date.");
+            throw new InvalidDataException("Start date cannot be after end date.");
         }
         if (endReading.value().compareTo(startReading.value()) < 0) {
-            throw new IllegalArgumentException("End reading value cannot be less than start reading value.");
+            throw new InvalidDataException("End reading value cannot be less than start reading value.");
         }
     }
 
@@ -73,7 +75,7 @@ public class BillingCalculatorService {
                 .filter(p -> p.product() == product)
                 .filter(p -> !p.startDate().isAfter(targetMonthStart) && !p.endDate().isBefore(targetMonthEnd))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No active price found for the target month: " + targetMonth));
+                .orElseThrow(() -> new ResourceNotFoundException("No active price found for the target month: " + targetMonth));
     }
 
     private BigDecimal calculateAmount(BigDecimal quantity, Price activePrice) {
