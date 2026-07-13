@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import { generateInvoice, fetchInvoices } from './services/billingApi';
+import { generateInvoice, fetchInvoices, reloadServerCache } from './services/billingApi';
 
 function App() {
   const [reference, setReference] = useState('123456789');
@@ -11,6 +11,15 @@ function App() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+
+  const handleReloadCache = async () => {
+    try {
+      const message = await reloadServerCache();
+      alert(message);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -50,6 +59,12 @@ function App() {
   return (
     <div className="container">
       <h1 className="title">Mini Billing System</h1>
+
+      <div className="action-container">
+        <button type="button" className="reload-btn" onClick={handleReloadCache}>
+          🔄 Опресни данните (Кеш)
+        </button>
+      </div>
 
       <div className="form-card">
         <h2 className="form-title">Генериране на фактура</h2>
@@ -92,7 +107,7 @@ function App() {
         {initialLoad && <p className="empty-text">Зареждане на историята...</p>}
         {!initialLoad && invoices.length === 0 && !error && <p className="empty-text">Няма генерирани фактури...</p>}
 
-        <div style={{ marginTop: '15px' }}>
+        <div className="invoice-list">
           {invoices.map((inv) => (
             <div key={inv.documentNumber} className="invoice-card">
               <h4 className="invoice-header">Фактура № {inv.documentNumber}</h4>

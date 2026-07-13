@@ -25,3 +25,15 @@ export async function fetchInvoices() {
 
     return response.json();
 }
+
+export async function reloadServerCache() {
+    const response = await fetch(`${API_BASE_URL}/reload-data`, {
+        method: 'POST'
+    });
+
+    if (!response.ok) {
+        throw new Error('Грешка при презареждане на кеша.');
+    }
+
+    return response.text();
+}
