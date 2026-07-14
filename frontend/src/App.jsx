@@ -11,13 +11,16 @@ function App() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
+  const [notification, setNotification] = useState(null);
 
   const handleReloadCache = async () => {
     try {
       const message = await reloadServerCache();
-      alert(message);
+      setNotification({ type: 'success', text: message });
     } catch (err) {
-      alert(err.message);
+      setNotification({ type: 'error', text: err.message });
+    } finally {
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 
@@ -58,6 +61,12 @@ function App() {
 
   return (
     <div className="container">
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.text}
+        </div>
+      )}
+
       <h1 className="title">Mini Billing System</h1>
 
       <div className="action-container">
