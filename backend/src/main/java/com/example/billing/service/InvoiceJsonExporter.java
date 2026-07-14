@@ -3,8 +3,6 @@ package com.example.billing.service;
 import com.example.billing.config.AppConstants;
 import com.example.billing.model.Invoice;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,10 +17,8 @@ public class InvoiceJsonExporter {
 
     private final ObjectMapper objectMapper;
 
-    public InvoiceJsonExporter() {
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.registerModule(new JavaTimeModule());
-        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+    public InvoiceJsonExporter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     public void export(Invoice invoice, String outputDirectory) {
