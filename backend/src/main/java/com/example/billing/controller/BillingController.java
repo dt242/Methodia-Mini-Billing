@@ -3,6 +3,7 @@ package com.example.billing.controller;
 import com.example.billing.config.AppConstants;
 import com.example.billing.dto.BillingRequest;
 import com.example.billing.model.Invoice;
+import com.example.billing.service.CacheService;
 import com.example.billing.service.InvoiceJsonExporter;
 import com.example.billing.service.InvoiceService;
 import com.example.billing.service.InvoiceStorageService;
@@ -22,13 +23,15 @@ public class BillingController {
     private final InvoiceService invoiceService;
     private final InvoiceJsonExporter jsonExporter;
     private final InvoiceStorageService storageService;
+    private final CacheService cacheService;
 
     public BillingController(InvoiceService invoiceService,
                              InvoiceJsonExporter jsonExporter,
-                             InvoiceStorageService storageService) {
+                             InvoiceStorageService storageService, CacheService cacheService) {
         this.invoiceService = invoiceService;
         this.jsonExporter = jsonExporter;
         this.storageService = storageService;
+        this.cacheService = cacheService;
     }
 
     @PostMapping("/invoice")
@@ -47,7 +50,7 @@ public class BillingController {
 
     @PostMapping("/reload-data")
     public ResponseEntity<String> reloadData() {
-        invoiceService.reloadAllData();
+        cacheService.reloadAll();
         return ResponseEntity.ok("CSV data successfully reloaded in memory.");
     }
 }
