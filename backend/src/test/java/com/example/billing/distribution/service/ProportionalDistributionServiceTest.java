@@ -21,14 +21,19 @@ class ProportionalDistributionServiceTest {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssxxx");
 
     @Test
-    void testScenario1() throws Exception {
-        runScenarioTest("sc1");
-    }
+    void testScenario1() throws Exception { runScenarioTest("sc1"); }
 
     @Test
-    void testScenario2() throws Exception {
-        runScenarioTest("sc2");
-    }
+    void testScenario2() throws Exception { runScenarioTest("sc2"); }
+
+    @Test
+    void testScenario3() throws Exception { runScenarioTest("sc3"); }
+
+    @Test
+    void testScenario4() throws Exception { runScenarioTest("sc4"); }
+
+    @Test
+    void testScenario5() throws Exception { runScenarioTest("sc5"); }
 
     private void runScenarioTest(String scenarioFolder) throws Exception {
         InputStream inStream = getClass().getResourceAsStream("/" + scenarioFolder + "/in.txt");

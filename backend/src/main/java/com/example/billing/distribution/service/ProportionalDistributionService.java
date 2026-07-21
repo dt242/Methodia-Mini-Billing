@@ -80,8 +80,8 @@ public class ProportionalDistributionService {
                 currentQuantity = totalQuantity.subtract(distributedQuantity);
             } else {
                 BigDecimal ratio = BigDecimal.valueOf(p.overlapDays)
-                        .divide(BigDecimal.valueOf(totalDays), 10, RoundingMode.HALF_UP);
-                currentQuantity = totalQuantity.multiply(ratio).setScale(2, RoundingMode.HALF_UP);
+                        .divide(BigDecimal.valueOf(totalDays), 2, RoundingMode.UP);
+                currentQuantity = totalQuantity.multiply(ratio).setScale(2, RoundingMode.UP);
                 distributedQuantity = distributedQuantity.add(currentQuantity);
             }
 
