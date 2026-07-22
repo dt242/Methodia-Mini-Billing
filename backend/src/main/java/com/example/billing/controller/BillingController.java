@@ -1,56 +1,37 @@
-//package com.example.billing.controller;
-//
-//import com.example.billing.config.AppConstants;
-//import com.example.billing.dto.BillingRequest;
-//import com.example.billing.model.Invoice;
-//import com.example.billing.service.CacheService;
-//import com.example.billing.service.InvoiceJsonExporter;
-//import com.example.billing.service.InvoiceService;
-//import com.example.billing.service.InvoiceStorageService;
-//import jakarta.validation.Valid;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.time.YearMonth;
-//import java.util.List;
-//
-//@RestController
-//@RequestMapping("/api/billing")
-//@CrossOrigin(origins = "http://localhost:5173")
-//public class BillingController {
-//
-//    private final InvoiceService invoiceService;
-//    private final InvoiceJsonExporter jsonExporter;
-//    private final InvoiceStorageService storageService;
-//    private final CacheService cacheService;
-//
-//    public BillingController(InvoiceService invoiceService,
-//                             InvoiceJsonExporter jsonExporter,
-//                             InvoiceStorageService storageService, CacheService cacheService) {
-//        this.invoiceService = invoiceService;
-//        this.jsonExporter = jsonExporter;
-//        this.storageService = storageService;
-//        this.cacheService = cacheService;
-//    }
-//
-//    @PostMapping("/invoice")
-//    public ResponseEntity<Invoice> generateInvoice(@Valid @RequestBody BillingRequest request) {
-//        YearMonth targetMonth = YearMonth.of(request.year(), request.month());
-//        Invoice invoice = invoiceService.generateInvoice(request.reference(), targetMonth, request.product());
-//        jsonExporter.export(invoice, AppConstants.OUTPUT_DIRECTORY);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(invoice);
-//    }
-//
-//    @GetMapping("/invoices")
-//    public ResponseEntity<List<Invoice>> getAllInvoices() {
-//        List<Invoice> invoices = storageService.getAllInvoices();
-//        return ResponseEntity.ok(invoices);
-//    }
-//
-//    @PostMapping("/reload-data")
-//    public ResponseEntity<String> reloadData() {
-//        cacheService.reloadAll();
-//        return ResponseEntity.ok("CSV data successfully reloaded in memory.");
-//    }
-//}
+package com.example.billing.controller;
+
+import com.example.billing.dto.BillingRequest;
+import com.example.billing.model.Invoice;
+import com.example.billing.repository.InvoiceRepository;
+import com.example.billing.service.InvoiceService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/billing")
+@CrossOrigin(origins = "*")
+public class BillingController {
+
+    private final InvoiceService invoiceService;
+    private final InvoiceRepository invoiceRepository;
+
+    public BillingController(InvoiceService invoiceService, InvoiceRepository invoiceRepository) {
+        this.invoiceService = invoiceService;
+        this.invoiceRepository = invoiceRepository;
+    }
+
+    @PostMapping("/invoice")
+    public ResponseEntity<Invoice> createInvoice(@Valid @RequestBody BillingRequest request) {
+        Invoice invoice = invoiceService.generateInvoice(request.reference(), request.product());
+        return ResponseEntity.status(HttpStatus.CREATED).body(invoice);
+    }
+
+    @GetMapping("/invoices")
+    public ResponseEntity<List<Invoice>> getAllInvoices() {
+        return ResponseEntity.ok(invoiceRepository.findAll());
+    }
+}
